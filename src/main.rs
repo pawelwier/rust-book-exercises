@@ -5,6 +5,7 @@ mod cli;
 use cli::users::{ handle_users };
 
 fn main() {
+/* 
   println!("*** practice ***");
   println!("");
   
@@ -21,7 +22,7 @@ fn main() {
   
   println!("");
   println!("*** practice ***");
-  
-  let users = Vec::<String>::new();
+*/  
+  let users = Vec::new();
   handle_users(users);
 }
