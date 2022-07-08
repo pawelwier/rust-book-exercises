@@ -27,6 +27,30 @@ pub mod users {
         text
     }
 
+    fn remove_user(users: &mut Vec<Employee>, user_name: String) -> () {
+        let index = users.iter().position(|user| user.name == user_name).unwrap();
+        users.remove(index);
+    }
+
+    fn add_user(users: &mut Vec<Employee>, user_name: String, department_name: String) -> () {
+        users.push(Employee::new(user_name.to_string().to_lowercase(), department_name.to_string().to_lowercase()));
+    }
+
+    fn display_all_users(users: &Vec<Employee>) -> () {
+        println!("all users:");
+        for user in users {
+            user.display_user();
+        }
+    }
+
+    fn display_users_by_dept_name(users: &mut Vec<Employee>, inserted_department: String) -> () {
+        let department_users: Vec<&Employee> = users.iter().filter(|user| user.department == inserted_department).collect();
+        println!("users from {}:", inserted_department);
+        for user in department_users {
+            println!("- {}", user.name);
+        }
+    }
+
     pub fn handle_users(mut users: Vec<Employee>) {
         let text = get_input_text();
         if text == "exit".to_string() {
@@ -35,37 +59,24 @@ pub mod users {
         }
         if text[..4].to_string() == "show" {
             if text == "show all".to_string() {
-                println!("all users:");
-                for user in &users {
-                    user.display_user();
-                }
-            } else {
-                if let [_, inserted_department] = text.split(" ").collect::<Vec<&str>>()[..] {
-                    let department_users: Vec<&Employee> = users.iter().filter(|user| user.department == inserted_department).collect();
-                    println!("users from {}:", inserted_department);
-                    for user in department_users {
-                        println!("- {}", user.name);
-                    }
-                }
+                display_all_users(&users);
+            } else if let [_, inserted_department] = text.split(" ").collect::<Vec<&str>>()[..] {
+                display_users_by_dept_name(&mut users, inserted_department.to_string());
             }
         } else {
             if let [first, second, third, fourth] = text.split(" ").collect::<Vec<&str>>()[..] {
-                if first.to_lowercase() == "add" && third.to_lowercase() == "to" {                
-                    users.push(Employee::new(second.to_string().to_lowercase(), fourth.to_string().to_lowercase()));
+                if first.to_lowercase() == "add" && third.to_lowercase() == "to" {      
+                    add_user(&mut users, second.to_string(), fourth.to_string());
                     println!("user {} added to department {}", second, fourth);
                 } else if first.to_lowercase() == "move" && third.to_lowercase() == "to" {
-                    let index = users.iter().position(|user| user.name == second).unwrap();
-                    users.remove(index);
-                    users.push(Employee::new(second.to_string(), fourth.to_string()));
-                    for user in &users {
-                        user.display_user();
-                    }
+                    remove_user(&mut users, second.to_string());
+                    add_user(&mut users, second.to_string(), fourth.to_string());
+                    println!("user {} moved to {}", second, fourth)
                 } else if first.to_lowercase() == "remove" && second.to_lowercase() == "user" && third.to_lowercase() == "name"  {
-                    let index = users.iter().position(|user| user.name == fourth).unwrap();
-                    users.remove(index);
+                    remove_user(&mut users, fourth.to_string());
                 }
             } else {
-                println!("Wrong text formatting");
+                println!("Wrong command");
             }
         }
         handle_users(users);
