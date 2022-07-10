@@ -1,8 +1,11 @@
-mod collections;
-use collections::practice::{ get_mid, get_mode, to_pig_latin };
+// mod collections;
+// use collections::practice::{ get_mid, get_mode, to_pig_latin };
 
-mod cli;
-use cli::users::{ handle_users };
+// mod cli;
+// use cli::users::handle_organization;
+
+mod file_reader;
+use file_reader::file_reader::get_file_contents;
 
 fn main() {
 /* 
@@ -22,7 +25,12 @@ fn main() {
   
   println!("");
   println!("*** practice ***");
-*/  
+  
   let users = Vec::new();
-  handle_users(users);
+  let departments = Vec::new();
+  handle_organization(users, departments);
+  */  
+
+    let text = get_file_contents("text".to_string());
+    println!("{}", text);
 }

@@ -20,6 +20,11 @@ pub mod users {
         }
     }
 
+    pub struct Department {
+        name: String,
+        max_count: i32
+    }
+
     fn get_input_text() -> String {
         let stdin = io::stdin();
         let mut iterator = stdin.lock().lines();
@@ -43,7 +48,7 @@ pub mod users {
         }
     }
 
-    fn display_users_by_dept_name(users: &mut Vec<Employee>, inserted_department: String) -> () {
+    fn display_users_by_dept_name(users: &Vec<Employee>, inserted_department: String) -> () {
         let department_users: Vec<&Employee> = users.iter().filter(|user| user.department == inserted_department).collect();
         println!("users from {}:", inserted_department);
         for user in department_users {
@@ -51,7 +56,7 @@ pub mod users {
         }
     }
 
-    pub fn handle_users(mut users: Vec<Employee>) {
+    pub fn handle_organization(mut users: Vec<Employee>, mut departments: Vec<Department>) {
         let text = get_input_text();
         if text == "exit".to_string() {
             println!("Bye bye!");
@@ -62,6 +67,10 @@ pub mod users {
                 display_all_users(&users);
             } else if let [_, inserted_department] = text.split(" ").collect::<Vec<&str>>()[..] {
                 display_users_by_dept_name(&mut users, inserted_department.to_string());
+            }
+        } else if text[..6].to_string() == "create" {
+            if let [_, inserted_department] = text.split(" ").collect::<Vec<&str>>()[..] {
+                
             }
         } else {
             if let [first, second, third, fourth] = text.split(" ").collect::<Vec<&str>>()[..] {
@@ -74,11 +83,12 @@ pub mod users {
                     println!("user {} moved to {}", second, fourth)
                 } else if first.to_lowercase() == "remove" && second.to_lowercase() == "user" && third.to_lowercase() == "name"  {
                     remove_user(&mut users, fourth.to_string());
+                    println!("user {} removed", fourth);
                 }
             } else {
                 println!("Wrong command");
             }
         }
-        handle_users(users);
+        handle_organization(users, departments);
     }
 }
