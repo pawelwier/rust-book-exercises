@@ -1,4 +1,4 @@
-pub mod text_forms {
+pub mod traits {
     pub trait Summary {
         fn get_summary(&self) -> String {
             String::from("Default summary")
@@ -36,4 +36,27 @@ pub mod text_forms {
     }
 
     impl Summary for Book {}
+
+    // also:
+    // pub fn summarize(item: &impl Summary) -> String {
+    // pub fn summarize<T: Summary>(item: &T) -> String {
+    pub fn summarize<T>(item: &T) -> String 
+        where T: Summary
+    {
+        format!("Here's your summary: {}", item.get_summary())
+    }
+
+    // also:
+    // pub fn largest<T: PartialOrd + Copy>(items: &[T]) -> T {
+    pub fn largest<T>(items: &[T]) -> T 
+        where T: PartialOrd + Copy
+    {
+        let mut largest = items[0];
+        for &item in items {
+            if item > largest {
+                largest = item
+            }
+        }
+        largest
+    }
 }

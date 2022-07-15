@@ -1,20 +1,16 @@
-// mod collections;
-// use collections::practice::{ get_mid, get_mode, to_pig_latin };
+mod collections;
+use collections::practice::{ get_mid, get_mode, to_pig_latin };
 
-// mod cli;
-// use cli::users::handle_organization;
+mod cli;
+use cli::users::handle_organization;
 
 mod file_reader;
 use file_reader::file_reader::get_file_contents;
 
-mod text_forms;
-use text_forms::text_forms::{Article, Tweet, Book, Summary};
+mod traits;
+use traits::traits::{Article, Tweet, Book, Summary, summarize, largest};
 
-fn main() {
-    /* 
-    println!("*** practice ***");
-    println!("");
-
+fn run_collection_exercises() {
     let mut arr1 = Vec::from([3, 3, 1, 2, 4, 5, 6]);
     get_mid(&mut arr1);
 
@@ -26,17 +22,17 @@ fn main() {
     to_pig_latin(&mut "first".to_string());
     to_pig_latin(&mut "kret".to_string());
 
-    println!("");
-    println!("*** practice ***");
-
     let users = Vec::new();
     let departments = Vec::new();
     handle_organization(users, departments);
-    */  
+}
 
-    // let text = get_file_contents("text".to_string());
-    // println!("{}", text);
+fn run_file_reader_exercises() {
+    let text = get_file_contents("text".to_string());
+    println!("{}", text);
+}
 
+fn run_trait_exercises() {
     let article = Article {author: String::from("kret"), page: 32, content: String::from("sdg dg dg"), topic: String::from("cars")};
     let tweet = Tweet {author: String::from("fant"), content: String::from("kjij kumhku zbczc")};
     let book = Book {author: String::from("jan"), title: String::from("cook book"), pages: 389};
@@ -44,4 +40,14 @@ fn main() {
     println!("{}", article.get_summary());
     println!("{}", tweet.get_summary());
     println!("{}", book.get_summary());
+
+    println!("{}", summarize(&article));
+
+    println!("{:?}", largest(&vec![4, 2, 12, 6, 3, 9]));
+}
+
+fn main() {
+    // run_collection_exercises();
+    // run_file_reader_exercises();
+    run_trait_exercises();
 }
