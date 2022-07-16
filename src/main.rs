@@ -10,6 +10,9 @@ use file_reader::file_reader::get_file_contents;
 mod traits;
 use traits::traits::{Article, Tweet, Book, Summary, summarize, largest};
 
+mod minigrep;
+use minigrep::minigrep::{get_lines_with_query, get_bin_name};
+
 fn run_collection_exercises() {
     let mut arr1 = Vec::from([3, 3, 1, 2, 4, 5, 6]);
     get_mid(&mut arr1);
@@ -49,5 +52,8 @@ fn run_trait_exercises() {
 fn main() {
     // run_collection_exercises();
     // run_file_reader_exercises();
-    run_trait_exercises();
+    // run_trait_exercises();
+
+    get_bin_name();
+    // get_lines_with_query();
 }

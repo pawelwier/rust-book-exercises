@@ -79,4 +79,10 @@ mod tests {
             Err(String::from("Invalid result"))
         }
     }
+
+    #[test]
+    #[ignore]
+    fn ignore_this_test() {
+        assert_eq!(4, 2 + 2);
+    }
 }
