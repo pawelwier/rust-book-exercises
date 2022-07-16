@@ -54,6 +54,6 @@ fn main() {
     // run_file_reader_exercises();
     // run_trait_exercises();
 
-    get_bin_name();
-    // get_lines_with_query();
+    // get_bin_name();
+    get_lines_with_query();
 }

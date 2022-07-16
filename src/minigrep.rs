@@ -1,14 +1,55 @@
 pub mod minigrep {
-    use std::{ env, fs };
+    use std::{ env::{self, args}, fs, process };
 
     pub fn get_bin_name() -> () {
         let args: Vec<String> = env::args().collect();
         let path: Vec<&str> = args[0].split("/").collect();
         println!("{}", path[path.len() - 1].to_string());
     }
+        
+    pub struct ParseArgs {
+        query: String,
+        file_name: String
+    }
 
-    fn get_args() -> Vec<String> {
-        env::args().collect()
+    impl ParseArgs {
+        pub fn new(args: &[String]) -> Result<ParseArgs, &'static str> {
+            validate_args(args);
+            if let [_, query, file_name] = &args[..] {
+                Ok(ParseArgs { 
+                    query: query.to_string(),
+                    file_name: file_name.to_string()
+                })
+            } else {
+                panic!("Invalid args");
+            }
+        }
+    }
+
+    fn exit() {
+        process::exit(1);
+    }
+
+    fn is_text_file(file_name: String) -> bool {
+        let file_name_parts: Vec<&str> = file_name.split(".").collect();
+        let extension = file_name_parts.last().unwrap();
+        extension.to_string() == "txt"
+    }
+
+    fn validate_args(args: &[String]) -> () {
+        if args.len() != 3 {
+            println!("Invalid argument length. Need 3, got {}", args.len());
+            exit();
+        }
+        if !is_text_file(args[2].to_string()) {
+            println!("{}", "Second argument needs to be a .txt file");
+            exit();
+        }
+    }
+
+    fn get_args() -> ParseArgs {
+        let args: Vec<String> = env::args().collect();
+        ParseArgs::new(&args).unwrap()
     }
 
     fn get_file_text(file_name: &str) -> String {
@@ -39,14 +80,10 @@ pub mod minigrep {
     
     pub fn get_lines_with_query() {
         let args = get_args();
-        if let [_, query, file_name] = &args[..] {
-            let text = get_file_text(&file_name);
-            let lines = get_text_file_lines(&text);
-            let lines_with_query = find_lines_with_query(lines, query);
-            print_message(query, lines_with_query);
-        } else {
-            panic!("Invalid arguments")
-        } 
+        let text = get_file_text(&args.file_name);
+        let lines = get_text_file_lines(&text);
+        let lines_with_query = find_lines_with_query(lines, &args.query);
+        print_message(&args.query, lines_with_query);
     }
     
 }
