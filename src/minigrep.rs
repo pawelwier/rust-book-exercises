@@ -6,7 +6,8 @@ pub mod minigrep {
         let path: Vec<&str> = args[0].split("/").collect();
         println!("{}", path[path.len() - 1].to_string());
     }
-        
+    
+    
     pub struct ParseArgs {
         query: String,
         file_name: String
@@ -14,7 +15,9 @@ pub mod minigrep {
 
     impl ParseArgs {
         pub fn new(args: &[String]) -> Result<ParseArgs, &'static str> {
-            validate_args(args);
+            if !validate_args(args) {
+                exit();
+            }
             if let [_, query, file_name] = &args[..] {
                 Ok(ParseArgs { 
                     query: query.to_string(),
@@ -36,15 +39,16 @@ pub mod minigrep {
         extension.to_string() == "txt"
     }
 
-    fn validate_args(args: &[String]) -> () {
+    fn validate_args(args: &[String]) -> bool {
         if args.len() != 3 {
             println!("Invalid argument length. Need 3, got {}", args.len());
-            exit();
+            return false
         }
         if !is_text_file(args[2].to_string()) {
             println!("{}", "Second argument needs to be a .txt file");
-            exit();
+            return false
         }
+        true
     }
 
     fn get_args() -> ParseArgs {
@@ -85,5 +89,41 @@ pub mod minigrep {
         let lines_with_query = find_lines_with_query(lines, &args.query);
         print_message(&args.query, lines_with_query);
     }
+
+    #[cfg(test)]
+    mod minigrep_tests {
+        use super::{is_text_file, validate_args, text_contains_slice};
+
+        #[test]
+        fn text_file_incorrect() {
+            let file_name = "image.jpeg";
+            assert_eq!(is_text_file(file_name.to_string()), false);
+        }
     
+        #[test]
+        fn text_file_correct() {
+            let file_name = "some-text.txt";
+            assert!(is_text_file(file_name.to_string()));
+        }
+
+        #[test]
+        fn create_parse_args() {
+            let args: [String; 3] = ["skip".to_string(), "only_one".to_string(), "sdf.txt".to_string()];
+            assert!(validate_args(&args));
+        }
+
+        #[test]
+        fn contains_substring() {
+            let text = "A sample text.";
+            let slice = "sample";
+            assert!(text_contains_slice(text, slice));
+        }
+
+        #[test]
+        fn does_not_contain_substring() {
+            let text = "A sample text again.";
+            let slice = "missing";
+            assert!(!text_contains_slice(text, slice));
+        }
+    }
 }
