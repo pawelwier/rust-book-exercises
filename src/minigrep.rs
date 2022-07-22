@@ -1,5 +1,5 @@
 pub mod minigrep {
-    use std::{ env::{self, args}, fs, process };
+    use std::{ env::{self, VarError}, fs, process };
 
     pub fn get_bin_name() -> () {
         let args: Vec<String> = env::args().collect();
@@ -10,7 +10,8 @@ pub mod minigrep {
     
     pub struct ParseArgs {
         query: String,
-        file_name: String
+        file_name: String,
+        ignore_case: bool
     }
 
     impl ParseArgs {
@@ -21,11 +22,20 @@ pub mod minigrep {
             if let [_, query, file_name] = &args[..] {
                 Ok(ParseArgs { 
                     query: query.to_string(),
-                    file_name: file_name.to_string()
+                    file_name: file_name.to_string(),
+                    ignore_case: is_case_sensitive()
                 })
             } else {
                 panic!("Invalid args");
             }
+        }
+    }
+
+    fn is_case_sensitive() -> bool {
+        let ignore_case_env: Result<String, VarError> = env::var("IGNORE_CASE");
+        match ignore_case_env {
+            Ok(res) => res == "1".to_string(),
+            Err(_) => false
         }
     }
 
@@ -61,17 +71,20 @@ pub mod minigrep {
             .expect("File reading error")
     }
 
-    fn text_contains_slice(text: &str, slice: &str) -> bool {
-        text.to_lowercase().contains(&slice.to_lowercase())
+    fn text_contains_slice(text: &str, slice: &str, to_lower: Option<bool>) -> bool {
+        let lowercase = to_lower.unwrap_or(false);
+        let text_case_check = if lowercase { text.to_lowercase() } else { text.to_string() };
+        let slice_case_check = if lowercase { slice.to_lowercase() } else { slice.to_string() };
+        text_case_check.contains(&slice_case_check)
     }
 
     fn get_text_file_lines(text: &str) -> Vec<&str> {
         let split_text: Vec<&str> = text.split("\n").collect();
         split_text
     }
-
-    fn find_lines_with_query(lines: Vec<&str>, query: &str) -> Vec<String> {
-        lines.iter().map(|line| line.to_string()).filter(|line| text_contains_slice(line, query)).collect()
+    
+    fn find_lines_with_query(lines: Vec<&str>, query: &str, ignore_case: bool) -> Vec<String> {
+        lines.iter().map(|line| line.to_string()).filter(|line| text_contains_slice(line, query, Some(ignore_case))).collect()
     }
 
     fn print_message(query: &str, lines: Vec<String>) -> () {
@@ -86,7 +99,7 @@ pub mod minigrep {
         let args = get_args();
         let text = get_file_text(&args.file_name);
         let lines = get_text_file_lines(&text);
-        let lines_with_query = find_lines_with_query(lines, &args.query);
+        let lines_with_query = find_lines_with_query(lines, &args.query, args.ignore_case);
         print_message(&args.query, lines_with_query);
     }
 
@@ -116,14 +129,14 @@ pub mod minigrep {
         fn contains_substring() {
             let text = "A sample text.";
             let slice = "sample";
-            assert!(text_contains_slice(text, slice));
+            assert!(text_contains_slice(text, slice, Some(false)));
         }
 
         #[test]
         fn does_not_contain_substring() {
             let text = "A sample text again.";
             let slice = "missing";
-            assert!(!text_contains_slice(text, slice));
+            assert!(!text_contains_slice(text, slice, Some(true)));
         }
     }
 }
