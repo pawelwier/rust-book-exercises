@@ -8,10 +8,13 @@ mod file_reader;
 use file_reader::file_reader::get_file_contents;
 
 mod traits;
-use traits::traits::{Article, Tweet, Book, Summary, summarize, largest};
+use traits::traits::{ Article, Tweet, Book, Summary, summarize, largest };
 
 mod minigrep;
-use minigrep::minigrep::{get_lines_with_query, get_bin_name};
+use minigrep::minigrep::{ get_lines_with_query, get_bin_name };
+
+mod closures;
+use closures::shirts::{ get_shirt_color_with_pref, get_shirt_color_without_pref };
 
 fn run_collection_exercises() {
     let mut arr1 = Vec::from([3, 3, 1, 2, 4, 5, 6]);
@@ -49,11 +52,21 @@ fn run_trait_exercises() {
     println!("{:?}", largest(&vec![4, 2, 12, 6, 3, 9]));
 }
 
+fn run_io_project() {
+    get_bin_name();
+    get_lines_with_query();
+}
+
+fn run_closure_exercises() {
+    println!("{:?}", get_shirt_color_with_pref());
+    println!("{:?}", get_shirt_color_without_pref());
+}
+
 fn main() {
     // run_collection_exercises();
     // run_file_reader_exercises();
     // run_trait_exercises();
+    // run_io_project();
 
-    // get_bin_name();
-    get_lines_with_query();
+    run_closure_exercises();
 }
