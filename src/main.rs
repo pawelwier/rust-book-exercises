@@ -16,6 +16,14 @@ use minigrep::minigrep::{ get_lines_with_query, get_bin_name };
 mod closures;
 use closures::shirts::{ get_shirt_color_with_pref, get_shirt_color_without_pref };
 
+mod smart_pointers;
+use smart_pointers::smart_pointers::{ make_list, say_hello, MyBox };
+
+enum List {
+    Cons(i32, Box<List>),
+    Nil
+}
+
 fn run_collection_exercises() {
     let mut arr1 = Vec::from([3, 3, 1, 2, 4, 5, 6]);
     get_mid(&mut arr1);
@@ -62,11 +70,18 @@ fn run_closure_exercises() {
     println!("{:?}", get_shirt_color_without_pref());
 }
 
+fn run_smart_pointers() {
+    // deref coercion
+    let my_box = MyBox::new(String::from("krab"));
+    say_hello(&my_box);
+}
+
 fn main() {
     // run_collection_exercises();
     // run_file_reader_exercises();
     // run_trait_exercises();
     // run_io_project();
+    // run_closure_exercises();
 
-    run_closure_exercises();
+    run_smart_pointers();
 }
